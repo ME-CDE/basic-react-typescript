@@ -14,6 +14,9 @@ import {
   ReWind,
 } from "../assets/icon/icon";
 
+let timeout: any;
+let isHidden = false;
+
 const VideoPlayer = () => {
   const l =
     "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
@@ -24,6 +27,7 @@ const VideoPlayer = () => {
   const [timePlayed, setTimePlayed] = useState("0:00");
   const my_video = useRef<HTMLVideoElement>(null);
   const customControls = useRef<HTMLDivElement>(null);
+  const controlsDiv = useRef<HTMLDivElement>(null);
 
   const pauseOrplay = (e: any) => {
     e.stopPropagation();
@@ -146,17 +150,41 @@ const VideoPlayer = () => {
           break;
       }
     };
+
+    function magicMouse() {
+      if (timeout) {
+        clearTimeout(timeout);
+      }
+      timeout = setTimeout(function () {
+        if (!isHidden && controlsDiv.current) {
+          document.body.style.cursor = "none";
+          controlsDiv.current.style.bottom = "-70px";
+          isHidden = true;
+        }
+      }, 5000);
+      if (isHidden && controlsDiv.current) {
+        document.body.style.cursor = "auto";
+        controlsDiv.current.style.bottom = "0";
+        isHidden = false;
+      }
+    }
+
     window.addEventListener("keydown", handleKeyPress);
+    const videoPlayerContainer = customControls.current;
+    videoPlayerContainer?.addEventListener("mousemove", magicMouse);
+
     return () => {
       window.removeEventListener("keydown", handleKeyPress);
+      videoPlayerContainer?.removeEventListener("mousemove", magicMouse);
     };
   }, []);
+
   return (
     <VideoContainer data-show={show} ref={customControls}>
       <ExtraDisplays onClick={pauseOrplay} justify="center">
         {loading && "loading..."}
       </ExtraDisplays>
-      <CustomControl p={[0, 20]} justify="space-between">
+      <CustomControl p={[0, 20]} justify="space-between" ref={controlsDiv}>
         <Flex m={[0, 50, 0, 0]}>
           {paused ? (
             <Play onClick={pauseOrplay} />

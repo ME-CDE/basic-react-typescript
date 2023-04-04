@@ -68,7 +68,7 @@ export const CustomControl = styled(Flex)<FlexProps>`
   width: 100%;
   height: 70px;
   position: absolute;
-  bottom: 0;
+  bottom: -70px;
   left: 0;
   background-color: #00000050;
   box-sizing: border-box;
@@ -80,6 +80,7 @@ export const CustomControl = styled(Flex)<FlexProps>`
       scale: 1.05;
     }
   }
+  transition: bottom 200ms ease-in-out;
 `;
 
 export const VideoContainer = styled.div`
@@ -94,6 +95,10 @@ export const VideoContainer = styled.div`
   max-width: 100%;
   max-height: 500px;
   margin: 0 auto;
+  overflow:hidden;
+  &:hover ${CustomControl} {
+    bottom:0;
+  }
 `;
 
 export const ExtraDisplays = styled(Flex)<FlexProps>`
